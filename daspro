@@ -1,0 +1,56 @@
+/* Nama file : lamahidup*/
+
+#include <stdio.h>
+#include <time.h>
+
+int isLeapYear(int year) {
+    if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+        return 1;
+    }
+    return 0;
+}
+
+int daysInMonth(int month, int year) {
+    int daysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (month == 2 && isLeapYear(year)) {
+        return 29;
+    }
+    return daysPerMonth[month - 1];
+}
+
+int daysLived(int bDay, int bMonth, int bYear) {
+    time_t t = time(NULL);
+    struct tm *today = localtime(&t);
+    int year = today->tm_year + 1900;
+    int month = today->tm_mon + 1;
+    int day = today->tm_mday;
+
+    int totalDays = 0;
+
+    totalDays += daysInMonth(bMonth, bYear) - bDay;
+
+    while (bYear < year || (bYear == year && bMonth < month)) {
+        bMonth++;
+        if (bMonth > 12) {
+            bMonth = 1;
+            bYear++;
+        }
+        totalDays += daysInMonth(bMonth, bYear);
+    }
+
+    totalDays -= (daysInMonth(month, year) - day);
+
+    return totalDays;
+}
+
+int main() {
+    int bDay, bMonth, bYear;
+
+    printf("Masukkan tanggal lahir (dd mm yyyy): ");
+    scanf("%d %d %d", &bDay, &bMonth, &bYear);
+
+    int days = daysLived(bDay, bMonth, bYear);
+    printf("Anda telah hidup selama %d hari\n", days);
+
+    return 0;
+}
